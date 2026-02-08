@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'com.strangecity'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+project.ext {
+    lwjglV = "3.3.3" // Актуальная версия на 2026 год
+}
+
+dependencies {
+    // Подключаем ядро LWJGL и модули для графики (OpenGL)
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglV")
+    implementation "org.lwjgl:lwjgl"
+    implementation "org.lwjgl:lwjgl-glfw"
+    implementation "org.lwjgl:lwjgl-opengl"
+    
+    // Нативные библиотеки (авто-определение системы)
+    runtimeOnly "org.lwjgl:lwjgl::natives-windows"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::natives-windows"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::natives-windows"
+}
+
+application {
+    mainClass = 'com.strangecity.core.Main'
+}
