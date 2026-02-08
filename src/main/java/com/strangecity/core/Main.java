@@ -4,23 +4,14 @@ import com.strangecity.engine.Renderer;
 import com.strangecity.engine.Camera;
 import com.strangecity.entities.Player;
 import com.strangecity.input.MouseInput;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+// Не забудь добавить новые импорты в самом верху файла!
+import org.lwjgl.glfw.GLFWImage;
+import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryStack;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
-public class Main {
-    private long window;
-    private Renderer renderer;
-    private Camera camera;
-    private Player player;
-    private MouseInput mouseInput;
-
-    public void run() {
-        init();
-        loop();
-        glfwTerminate();
-    }
+// ... внутри класса Main ...
 
     private void init() {
         if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
@@ -31,11 +22,14 @@ public class Main {
 
         window = glfwCreateWindow(1280, 720, "Strange City 3D", 0, 0);
         
+        // --- ВСТАВЛЯЕМ ЗАГРУЗКУ ИКОНКИ ---
+        setIcon(window, "src/main/resources/textures/icon.png"); 
+        // ---------------------------------
+
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
         glfwShowWindow(window);
 
-        // Инициализация модулей
         camera = new Camera();
         mouseInput = new MouseInput(window);
         player = new Player(camera);
@@ -43,23 +37,28 @@ public class Main {
         renderer.init();
     }
 
-    private void loop() {
-        while (!glfwWindowShouldClose(window)) {
-            // 1. Ввод
-            mouseInput.input(camera);
+    // Новый метод для установки иконки
+    private void setIcon(long window, String path) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer comp = stack.mallocInt(1);
 
-            // 2. Логика (Физика)
-            player.update(window);
+            // Загружаем картинку
+            ByteBuffer iconData = STBImage.stbi_load(path, w, h, comp, 4);
+            if (iconData != null) {
+                GLFWImage.Buffer iconBuffer = GLFWImage.malloc(1);
+                iconBuffer.position(0);
+                iconBuffer.width(w.get(0));
+                iconBuffer.height(h.get(0));
+                iconBuffer.pixels(iconData);
 
-            // 3. Рендеринг (Рисование)
-            renderer.render(camera);
-
-            glfwSwapBuffers(window);
-            glfwPollEvents();
+                glfwSetWindowIcon(window, iconBuffer);
+                
+                STBImage.stbi_image_free(iconData); // Чистим память
+                iconBuffer.free();
+            } else {
+                System.err.println("Не удалось загрузить иконку: " + path);
+            }
         }
     }
-
-    public static void main(String[] args) {
-        new Main().run();
-    }
-}
