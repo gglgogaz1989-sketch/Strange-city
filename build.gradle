@@ -1,55 +1,10 @@
 buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
     dependencies {
-        // Версия как в SPD (или чуть свежее)
         classpath 'com.android.tools.build:gradle:8.2.0'
     }
 }
 
-// Применяем плагины
-apply plugin: 'com.android.application'
-
-android {
-    // Твой уникальный ID (как appPackageName в SPD)
-    namespace "com.strangecity" 
-    compileSdk 34
-
-    defaultConfig {
-        applicationId "com.strangecity"
-        minSdk 21
-        targetSdk 34
-        versionCode 1
-        versionName "1.0"
-    }
-
-    // Твоя особая структура папок
-    sourceSets {
-        main {
-            manifest.srcFile 'android/AndroidManifest.xml'
-            java.srcDirs = ['src', 'android/src']
-            assets.srcDirs = ['resources/textures']
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-}
-
-dependencies {
-    // Версии библиотек LibGDX
-    def gdxVersion = '1.12.1'
-    
-    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-    
-    // Нативные библиотеки (чтобы игра запустилась на телефоне)
-    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
-    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+plugins {
+    id 'com.android.application' version '8.2.0' apply false
+    id 'java-library' version '8.2.0' apply false
 }
