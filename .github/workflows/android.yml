@@ -18,8 +18,13 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
-    # ВАЖНО: Мы запускаем 'gradle build', а не './gradlew build'
-    # Это работает, потому что 'setup-gradle' устанавливает gradle в систему
     - name: Build Project
       run: gradle build --no-daemon
-      
+
+    # ЭТОТ БЛОК СОЗДАЕТ ССЫЛКУ НА СКАЧИВАНИЕ
+    - name: Upload Game File
+      uses: actions/upload-artifact@v4
+      with:
+        name: StrangeCity-Alpha-Build
+        path: build/libs/*.jar
+        
