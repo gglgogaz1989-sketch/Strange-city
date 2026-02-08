@@ -7,9 +7,10 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
+            // Указываем компилятору брать код и из android, и из core
+            java.srcDirs = ['src', '../core/src/main/java']
             assets.srcDirs = ['../core/src/assets']
-            res.srcDirs = ['res'] // Для иконки
+            res.srcDirs = ['res']
         }
     }
 
@@ -20,11 +21,18 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 }
 
 dependencies {
-    implementation project(':core')
+    // Теперь все зависимости LibGDX здесь
+    implementation "com.badlogicgames.gdx:gdx:1.12.1"
     implementation "com.badlogicgames.gdx:gdx-backend-android:1.12.1"
+    
     runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-armeabi-v7a"
     runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-arm64-v8a"
     runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-x86"
