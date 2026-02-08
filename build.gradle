@@ -1,91 +1,38 @@
-// 1. Настройка плагинов и репозиториев
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        // Плагин для сборки Android APK
-        classpath 'com.android.tools.build:gradle:8.2.0'
-    }
+plugins {
+    id 'java'
+    id 'com.android.application' version '8.2.0' // Плагин для APK
 }
 
-allprojects {
-    apply plugin: "eclipse"
-    apply plugin: "idea"
-
-    version = '1.0'
-    ext {
-        appName = "Strange City"
-        gdxVersion = '1.12.1'
-    }
-
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-    }
+repositories {
+    google()
+    mavenCentral()
 }
 
-// 2. CORE — Мозг игры (Кнопки, Прыжки, Твои арты)
-project(":core") {
-    apply plugin: "java-library"
+android {
+    namespace "com.strangecity"
+    compileSdk 34
 
-    dependencies {
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-    }
-}
-
-// 3. DESKTOP — Версия для ПК (Создает JAR)
-project(":desktop") {
-    apply plugin: "java-library"
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-    }
-}
-
-// 4. ANDROID — Версия для телефона (Создает APK)
-project(":android") {
-    apply plugin: "com.android.application"
-
-    configurations { natives }
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
-    }
-
-    android {
-        namespace "com.strangecity"
-        compileSdk 34
-        
-        defaultConfig {
-            applicationId "com.strangecity"
-            minSdk 19
-            targetSdk 34
-            versionCode 1
-            versionName "1.0"
-        }
-
-        sourceSets {
-            main {
-                manifest.srcFile 'AndroidManifest.xml'
-                java.srcDirs = ['src']
-                aidl.srcDirs = ['src']
-                renderscript.srcDirs = ['src']
-                res.srcDirs = ['res']
-                assets.srcDirs = ['assets']
-                jniLibs.srcDirs = ['libs']
-            }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml' // Манифест в корне
+            java.srcDirs = ['src']                // Твоя папка с кодом
+            assets.srcDirs = ['assets']            // Твои картинки
         }
     }
+
+    defaultConfig {
+        applicationId "com.strangecity"
+        minSdk 19
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {
+    // Библиотеки LibGDX для работы игры
+    implementation "com.badlogicgames.gdx:gdx:1.12.1"
+    implementation "com.badlogicgames.gdx:gdx-backend-android:1.12.1"
+    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-armeabi-v7a"
+    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-arm64-v8a"
 }
