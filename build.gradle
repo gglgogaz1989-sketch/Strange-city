@@ -1,26 +1,12 @@
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
 plugins {
     id 'java'
     id 'com.android.application' version '8.2.0'
-}
-
-repositories {
-    google()
-    mavenCentral()
 }
 
 android {
     namespace "com.strangecity"
     compileSdk 34
     
-    // Указываем, что всё лежит в одной папке src
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -36,6 +22,12 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    // Это нужно для совместимости Java в Android
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 }
 
 dependencies {
@@ -43,4 +35,6 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx-backend-android:1.12.1"
     runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-armeabi-v7a"
     runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-arm64-v8a"
+    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-x86"
+    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-x86_64"
 }
