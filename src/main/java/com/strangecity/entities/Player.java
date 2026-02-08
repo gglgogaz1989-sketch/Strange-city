@@ -1,43 +1,37 @@
 package com.strangecity.entities;
 
-import org.joml.Vector3f;
+import com.strangecity.engine.Camera;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Player {
-    public Vector3f position;
-    public Vector3f velocity; // Вектор скорости
-    
-    private final float GRAVITY = -0.005f; // Сила притяжения
-    private final float JUMP_FORCE = 0.15f;
-    private boolean onGround = false;
+    private Camera camera;
+    private float speed = 0.1f;
 
-    public Player(Vector3f startPos) {
-        this.position = startPos;
-        this.velocity = new Vector3f(0, 0, 0);
+    public Player(Camera camera) {
+        this.camera = camera;
     }
 
-    public void update() {
-        // 1. Применяем гравитацию, если мы не на земле
-        if (!onGround) {
-            velocity.y += GRAVITY;
+    public void update(long window) {
+        // Простое движение WASD
+        // В реальной игре здесь нужна математика векторов, чтобы ходить "куда смотришь"
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            camera.position.z -= speed;
         }
-
-        // 2. Движение (упрощенно)
-        position.add(velocity);
-
-        // 3. Фейковая проверка пола (пока нет коллизии с объектами)
-        if (position.y < 0) { 
-            position.y = 0;
-            velocity.y = 0;
-            onGround = true;
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            camera.position.z += speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            camera.position.x -= speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            camera.position.x += speed;
+        }
+        
+        // Простая гравитация (чтобы не провалиться под землю y=0)
+        if (camera.position.y > 2.0f) {
+            camera.position.y -= 0.05f;
         } else {
-            onGround = false;
-        }
-    }
-
-    public void jump() {
-        if (onGround) {
-            velocity.y = JUMP_FORCE;
-            onGround = false;
+            camera.position.y = 2.0f;
         }
     }
 }
