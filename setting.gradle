@@ -1,0 +1,3 @@
+rootProject.name = 'Strange-city'
+include ':core', ':desktop', ':android'
+
