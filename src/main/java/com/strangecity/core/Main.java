@@ -3,17 +3,39 @@ package com.strangecity.core;
 import com.strangecity.engine.Renderer;
 import com.strangecity.engine.Camera;
 import com.strangecity.entities.Player;
-import com.strangecity.input.MouseInput;
-// Не забудь добавить новые импорты в самом верху файла!
-import org.lwjgl.glfw.GLFWImage;
+import com.strangecity.input.MouseInput; // Убедись, что папка называется input
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.*;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
+
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-// ... внутри класса Main ...
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+
+public class Main {
+    private long window;
+    private Renderer renderer;
+    private Camera camera;
+    private Player player;
+    private MouseInput mouseInput;
+
+    public void run() {
+        init();
+        loop();
+        
+        // Освобождаем память и закрываем окно
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
+    }
 
     private void init() {
+        GLFWErrorCallback.createPrint(System.err).set();
+
         if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
 
         glfwDefaultWindowHints();
@@ -21,15 +43,17 @@ import java.nio.IntBuffer;
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         window = glfwCreateWindow(1280, 720, "Strange City 3D", 0, 0);
+        if (window == 0) throw new RuntimeException("Failed to create the GLFW window");
         
-        // --- ВСТАВЛЯЕМ ЗАГРУЗКУ ИКОНКИ ---
+        // --- ЗАГРУЗКА ИКОНКИ ---
+        // Путь должен быть относительным корня проекта при запуске
         setIcon(window, "src/main/resources/textures/icon.png"); 
-        // ---------------------------------
 
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
         glfwShowWindow(window);
 
+        // Инициализация игры
         camera = new Camera();
         mouseInput = new MouseInput(window);
         player = new Player(camera);
@@ -37,14 +61,14 @@ import java.nio.IntBuffer;
         renderer.init();
     }
 
-    // Новый метод для установки иконки
+    // Метод загрузки иконки (ВНУТРИ КЛАССА)
     private void setIcon(long window, String path) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer comp = stack.mallocInt(1);
 
-            // Загружаем картинку
+            // Загружаем картинку через STB
             ByteBuffer iconData = STBImage.stbi_load(path, w, h, comp, 4);
             if (iconData != null) {
                 GLFWImage.Buffer iconBuffer = GLFWImage.malloc(1);
@@ -55,10 +79,42 @@ import java.nio.IntBuffer;
 
                 glfwSetWindowIcon(window, iconBuffer);
                 
-                STBImage.stbi_image_free(iconData); // Чистим память
+                STBImage.stbi_image_free(iconData);
                 iconBuffer.free();
             } else {
-                System.err.println("Не удалось загрузить иконку: " + path);
+                // Если картинки нет, просто выводим предупреждение, но не крашим игру
+                System.out.println("Warning: Icon not found at " + path);
             }
         }
     }
+
+    private void loop() {
+        while (!glfwWindowShouldClose(window)) {
+            // 1. Ввод
+            mouseInput.input(camera);
+
+            // 2. Логика
+            player.update(window);
+
+            // 3. Рендеринг
+            renderer.render(camera);
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+    }
+
+    // Вспомогательный метод для очистки колбэков
+    private void glfwFreeCallbacks(long window) {
+        glfwSetWindowCloseCallback(window, null).free();
+        glfwSetKeyCallback(window, null).free();
+        glfwSetCursorPosCallback(window, null).free();
+        glfwSetMouseButtonCallback(window, null).free();
+        glfwSetScrollCallback(window, null).free();
+    }
+
+    public static void main(String[] args) {
+        new Main().run();
+    }
+
+} // <--- ВОТ ЭТА СКОБКА ОЧЕНЬ ВАЖНА, ОНА ЗАКРЫВАЕТ ВЕСЬ КЛАСС
