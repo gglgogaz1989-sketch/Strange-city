@@ -8,4 +8,9 @@ buildscript {
     }
 }
 
-// Убрали блок plugins с java-library, чтобы не было конфликтов версий
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
