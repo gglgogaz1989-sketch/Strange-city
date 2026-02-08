@@ -4,12 +4,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Прописываем путь к плагину Android вручную
         classpath 'com.android.tools.build:gradle:8.2.0'
     }
 }
 
-// Применяем плагины по-старому (это надежнее для поиска)
 apply plugin: 'com.android.application'
 
 repositories {
@@ -21,20 +19,20 @@ android {
     namespace "com.strangecity"
     compileSdk 34
 
-    sourceSets {
-        main {
-            manifest.srcFile 'android/AndroidManifest.xml'
-            java.srcDirs = ['src', 'android/src']
-            assets.srcDirs = ['resources/textures']
-        }
-    }
-
     defaultConfig {
         applicationId "com.strangecity"
         minSdk 21
         targetSdk 34
         versionCode 1
         versionName "1.0"
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'android/AndroidManifest.xml'
+            java.srcDirs = ['src', 'android/src']
+            assets.srcDirs = ['resources/textures']
+        }
     }
 
     compileOptions {
@@ -44,10 +42,12 @@ android {
 }
 
 dependencies {
+    // Используем implementation вместо api/runtimeOnly для стабильности в этой структуре
     implementation "com.badlogicgames.gdx:gdx:1.12.1"
     implementation "com.badlogicgames.gdx:gdx-backend-android:1.12.1"
-    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-armeabi-v7a"
-    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-arm64-v8a"
-    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-x86"
-    runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-x86_64"
+    
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-armeabi-v7a"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-arm64-v8a"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-x86"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-x86_64"
 }
