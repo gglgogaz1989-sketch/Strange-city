@@ -1,55 +1,58 @@
 package com.strangecity.core;
 
+import com.strangecity.engine.Renderer;
+import com.strangecity.engine.Camera;
+import com.strangecity.entities.Player;
+import com.strangecity.input.MouseInput;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-import com.strangecity.engine.Renderer; // Импортируем наш рендерер
-import com.strangecity.input.MouseInput; // Импортируем управление
-
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
     private long window;
     private Renderer renderer;
+    private Camera camera;
+    private Player player;
     private MouseInput mouseInput;
 
     public void run() {
         init();
         loop();
-
-        // Освобождаем память при выходе
         glfwTerminate();
     }
 
     private void init() {
-        if (!glfwInit()) throw new IllegalStateException("Не удалось запустить GLFW");
+        if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
 
-        // Создаем окно
-        window = glfwCreateWindow(1280, 720, "Strange City - First Person", 0, 0);
-        if (window == 0) throw new RuntimeException("Ошибка создания окна");
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
+        window = glfwCreateWindow(1280, 720, "Strange City 3D", 0, 0);
+        
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
+        glfwShowWindow(window);
 
-        // Инициализируем наши модули из других папок
+        // Инициализация модулей
+        camera = new Camera();
+        mouseInput = new MouseInput(window);
+        player = new Player(camera);
         renderer = new Renderer();
         renderer.init();
-
-        mouseInput = new MouseInput();
-        mouseInput.init(window);
     }
 
     private void loop() {
         while (!glfwWindowShouldClose(window)) {
-            // 1. Ввод (Клавиатура/Мышь)
-            mouseInput.input(window);
+            // 1. Ввод
+            mouseInput.input(camera);
 
-            // 2. Обновление логики (Strange City оживает здесь)
+            // 2. Логика (Физика)
+            player.update(window);
 
-            // 3. Рисование
-            renderer.clear();
-            
-            // В будущем здесь будет вызов renderer.render(scene);
+            // 3. Рендеринг (Рисование)
+            renderer.render(camera);
 
             glfwSwapBuffers(window);
             glfwPollEvents();
