@@ -1,35 +1,68 @@
-plugins {
-    id 'java'
-    id 'application'
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+    dependencies {
+        // Подключаем плагин Android для сборки APK
+        classpath 'com.android.tools.build:gradle:8.2.0'
+    }
 }
 
-group 'com.strangecity'
-version '1.0'
+allprojects {
+    apply plugin: "eclipse"
+    apply plugin: "idea"
 
-repositories {
-    mavenCentral()
+    version = '1.0'
+    ext {
+        appName = "Strange City"
+        gdxVersion = '1.12.1'
+        roboVMVersion = '2.3.20'
+        box2DLightsVersion = '1.6'
+        ashleyVersion = '1.7.4'
+        aiVersion = '1.8.2'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
 }
 
-// Версии библиотек
-def lwjglVersion = "3.3.3"
-def jomlVersion = "1.10.5"
-
-dependencies {
-    // Ядро и основные модули
-    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
-    implementation "org.lwjgl:lwjgl"
-    implementation "org.lwjgl:lwjgl-glfw"
-    implementation "org.lwjgl:lwjgl-opengl"
-    implementation "org.lwjgl:lwjgl-stb" // Для загрузки иконок и текстур
-    implementation "org.joml:joml:$jomlVersion" // Для 3D математики
-
-    // Нативные библиотеки (для работы с железом)
-    runtimeOnly "org.lwjgl:lwjgl::natives-linux"
-    runtimeOnly "org.lwjgl:lwjgl-glfw::natives-linux"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::natives-linux"
-    runtimeOnly "org.lwjgl:lwjgl-stb::natives-linux"
+// 1. ОБЩИЙ КОД ИГРЫ (Логика, Физика, Твои арты)
+project(":core") {
+    apply plugin: "java-library"
+    dependencies {
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    }
 }
 
-application {
-    mainClass = 'com.strangecity.core.Main'
+// 2. ВЕРСИЯ ДЛЯ ПК (Создает .JAR)
+project(":desktop") {
+    apply plugin: "java-library"
+    dependencies {
+        implementation project(":core")
+        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    }
+}
+
+// 3. ВЕРСИЯ ДЛЯ ТЕЛЕФОНА (Создает .APK)
+project(":android") {
+    apply plugin: "com.android.application"
+
+    configurations { natives }
+
+    dependencies {
+        implementation project(":core")
+        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+    }
 }
