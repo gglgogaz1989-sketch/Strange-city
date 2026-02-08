@@ -1,12 +1,11 @@
 plugins {
-    id 'java'
     id 'com.android.application' version '8.2.0'
 }
 
 android {
     namespace "com.strangecity"
     compileSdk 34
-    
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -23,7 +22,6 @@ android {
         versionName "1.0"
     }
 
-    // Это нужно для совместимости Java в Android
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
