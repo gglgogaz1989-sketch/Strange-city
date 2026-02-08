@@ -1,32 +1,25 @@
-name: Strange City Build CI
+name: Strange City Build
 
-on:
-  push:
-    branches: [ "main" ] # Запускать при каждом пуше в главную ветку
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest # Используем Linux сервер для сборки
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Set up JDK 17 # Устанавливаем Java (версия 17+ нужна для LWJGL 3)
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-package: jdk
         java-version: '17'
         distribution: 'temurin'
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Build with Gradle
-      run: ./gradlew build
+    # ВАЖНО: Мы запускаем 'gradle build', а не './gradlew build'
+    # Это работает, потому что 'setup-gradle' устанавливает gradle в систему
+    - name: Build Project
+      run: gradle build --no-daemon
       
