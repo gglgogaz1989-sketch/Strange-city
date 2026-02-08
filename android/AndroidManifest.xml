@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application 
         android:label="Strange City"
-        android:icon="@drawable/icon"> <activity android:name="com.strangecity.AndroidLauncher"
+        android:icon="@drawable/icon">
+        <activity android:name="com.strangecity.AndroidLauncher"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="landscape">
