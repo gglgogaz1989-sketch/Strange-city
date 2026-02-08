@@ -1,6 +1,14 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 plugins {
     id 'java'
-    id 'com.android.application' version '8.2.0' // Плагин для APK
+    id 'com.android.application' version '8.2.0'
 }
 
 repositories {
@@ -11,18 +19,19 @@ repositories {
 android {
     namespace "com.strangecity"
     compileSdk 34
-
+    
+    // Указываем, что всё лежит в одной папке src
     sourceSets {
         main {
-            manifest.srcFile 'AndroidManifest.xml' // Манифест в корне
-            java.srcDirs = ['src']                // Твоя папка с кодом
-            assets.srcDirs = ['assets']            // Твои картинки
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            assets.srcDirs = ['assets']
         }
     }
 
     defaultConfig {
         applicationId "com.strangecity"
-        minSdk 19
+        minSdk 21
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -30,7 +39,6 @@ android {
 }
 
 dependencies {
-    // Библиотеки LibGDX для работы игры
     implementation "com.badlogicgames.gdx:gdx:1.12.1"
     implementation "com.badlogicgames.gdx:gdx-backend-android:1.12.1"
     runtimeOnly "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-armeabi-v7a"
