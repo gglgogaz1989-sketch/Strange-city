@@ -1,10 +1,13 @@
 buildscript {
     dependencies {
+        // Это версия именно Android-инструментов, она остается
         classpath 'com.android.tools.build:gradle:8.2.0'
     }
 }
 
 plugins {
+    // Android-плагин — версия нужна
     id 'com.android.application' version '8.2.0' apply false
-    id 'java-library' version '8.2.0' apply false
+    // Встроенный плагин Java — версию УДАЛЯЕМ
+    id 'java-library' apply false
 }
