@@ -4,27 +4,30 @@ plugins {
 }
 
 group 'com.strangecity'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 repositories {
     mavenCentral()
 }
 
-project.ext.lwjglVer = "3.3.3"
-project.ext.jomlVer = "1.10.5"
+// Версии библиотек
+def lwjglVersion = "3.3.3"
+def jomlVersion = "1.10.5"
 
 dependencies {
-    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVer")
+    // Ядро и основные модули
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
     implementation "org.lwjgl:lwjgl"
     implementation "org.lwjgl:lwjgl-glfw"
     implementation "org.lwjgl:lwjgl-opengl"
-    implementation "org.lwjgl:lwjgl-stb" // <-- ДОБАВИЛ ЭТО
-    implementation "org.joml:joml:$jomlVer"
-    
+    implementation "org.lwjgl:lwjgl-stb" // Для загрузки иконок и текстур
+    implementation "org.joml:joml:$jomlVersion" // Для 3D математики
+
+    // Нативные библиотеки (для работы с железом)
     runtimeOnly "org.lwjgl:lwjgl::natives-linux"
     runtimeOnly "org.lwjgl:lwjgl-glfw::natives-linux"
     runtimeOnly "org.lwjgl:lwjgl-opengl::natives-linux"
-    runtimeOnly "org.lwjgl:lwjgl-stb::natives-linux" // <-- И ЭТО
+    runtimeOnly "org.lwjgl:lwjgl-stb::natives-linux"
 }
 
 application {
