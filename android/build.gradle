@@ -7,7 +7,7 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            // Указываем компилятору брать код и из android, и из core
+            // Забираем код и картинки из папки core
             java.srcDirs = ['src', '../core/src/main/java']
             assets.srcDirs = ['../core/src/assets']
             res.srcDirs = ['res']
@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    // Теперь все зависимости LibGDX здесь
+    // Подключаем LibGDX напрямую
     implementation "com.badlogicgames.gdx:gdx:1.12.1"
     implementation "com.badlogicgames.gdx:gdx-backend-android:1.12.1"
     
